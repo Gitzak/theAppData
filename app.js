@@ -21,6 +21,9 @@ const app = express();
 
 const oneDay = 1000 * 60 * 60 * 24;
 
+//------------ Passport Configuration ------------//
+require('./config/passport-local');
+
 // Middlewares
 app.use(methodOverride('_method'));
 app.use(cookieParser());

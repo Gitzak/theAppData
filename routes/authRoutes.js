@@ -13,7 +13,7 @@ authRouter.get('/register', authMiddleware.checkNotAuthenticated, authController
 // Define routes for login
 authRouter.get('/login', authMiddleware.checkNotAuthenticated, authController.renderLoginPage);
 
-// authRouter.post('/login', authMiddleware.checkNotAuthenticated, authController.processLogin);
+authRouter.post('/login', authMiddleware.checkNotAuthenticated, authController.processLogin);
 
 // Export the authRouter for use in the application
 module.exports = authRouter;

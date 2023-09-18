@@ -1,10 +1,9 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 const fs = require('fs');
 const path = require('path');
-const { validationResult } = require('express-validator');
 const axios = require('axios');
-
+const bcrypt = require('bcrypt');
+const passport = require('passport');
 const secretKey = process.env.SECRET_KEY;
 
 const urlUsers = 'http://localhost:3000/users'
@@ -38,8 +37,16 @@ function logout(req, res) {
     });
 }
 
+function processLogin(req, res, next) {
+    passport.authenticate("local", {
+        successRedirect: "/dashboard",
+        failureRedirect: "/auth/login",
+        failureFlash: true,
+    })
+}
+
 module.exports = {
     renderRegisterPage,
     renderLoginPage,
-    // processLogin
+    processLogin
 };
