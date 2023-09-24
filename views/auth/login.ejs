@@ -6,7 +6,7 @@
                     <h1 class="h2">Welcome back!</h1>
                     <p class="lead">Sign in to your account to continue</p>
                 </div>
-
+                <%- include('../partials/messages/message.ejs') %>
                 <div class="card">
                     <div class="card-body">
                         <div class="m-sm-3">
@@ -25,24 +25,14 @@
                                         <label class="form-check-label text-small" for="customControlInline">Remember me</label>
                                     </div>
                                 </div>
-                                <% if (message) { %>
-                                <p class="text-danger"><%= message %></p>
-                                <% } %>
                                 <div class="d-grid gap-2 mt-3">
                                     <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
                                 </div>
                             </form>
-                            <hr />
-                            <p>Or log in using:</p>
-                            <div class="d-flex justify-content-center gap-2 mt-3">
-                                <a href="#" class="btn btn-info btn-lg"><i class="fa-brands fa-google me-1"></i> Google</a>
-                                <a href="#" class="btn btn-primary btn-lg"><i class="fa-brands fa-linkedin me-1"></i> Linkedin</a>
-                                <a href="#" class="btn btn-dark btn-lg"><i class="fa-brands fa-github me-1"></i> Github</a>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center mb-3">Don't have an account? <a href="/auth/register">Sign up</a></div>
+                <div class="text-center mb-3"><a href="/auth/forgot">I forgot my password</a></div>
             </div>
         </div>
     </div>

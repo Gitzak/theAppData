@@ -1,18 +1,16 @@
 const express = require('express');
 const session = require('express-session');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser');
 const expressLayout = require('express-ejs-layouts');
-const path = require('path');
 const methodOverride = require('method-override');
+const path = require('path');
 const flash = require('connect-flash')
 const passport = require('passport');
+const bcrypt = require('bcrypt');
+var oldInput = require('old-input');
+require('dotenv').config();
 
-// Load environment variables from .env
-dotenv.config();
+const User = require('./server/models/User');
 
-// JWT secret key
 const secretKey = process.env.SECRET_KEY;
 
 const port = process.env.PORT || 8500;
@@ -21,12 +19,14 @@ const app = express();
 
 const oneDay = 1000 * 60 * 60 * 24;
 
-//------------ Passport Configuration ------------//
-require('./config/passport-local');
+require('./server/config/passport-local')(passport);
+
+const connectDB = require('./server/config/db');
+
+connectDB();
 
 // Middlewares
 app.use(methodOverride('_method'));
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
@@ -41,6 +41,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+app.use(oldInput);
+
+//------------ Global variables ------------//
+app.use(function (req, res, next) {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.validationErrors = req.flash('validationErrors');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
@@ -53,13 +63,17 @@ app.set('views', path.join(__dirname, './views'));
 // app.use('/', rootRoutes);
 
 // // Include authentication routes from the "auth" folder
-const authRoutes = require('./routes/authRoutes');
-app.use('/auth', authRoutes);
-
-const appRoutes = require('./routes/appRoutes');
-app.use('/dashboard', appRoutes);
+app.use('/', require('./server/routes/appRoutes'));
+app.use('/auth', require('./server/routes/authRoutes'));
+app.use('/', require('./server/routes/usersRoutes'));
 
 // Start the server on port 3000
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
+    // openInBrowser(`http://localhost:${port}`);
 });
+
+// function openInBrowser(url) {
+//     const openCommand = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+//     require('child_process').exec(`${openCommand} ${url}`);
+// }

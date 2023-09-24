@@ -1,0 +1,144 @@
+<div class="container-fluid p-0">
+    <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-between">
+            <h1 class="h3"><strong>New User</strong></h1>
+            <a href="/users" class="btn btn-primary"><i class="align-middle" data-feather="arrow-left"></i> Back</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Create new user</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/users/store" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputUsername">Username</label>
+                                            <input type="text" class="form-control" id="inputUsername" name="inputUsername" placeholder="Username" value="<%= oldInput.inputUsername || '' %>" />
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputUsername') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputEmail">Email</label>
+                                            <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Email" value="<%= oldInput.inputEmail || ''  %>" />
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputEmail') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputFirstName">First name</label>
+                                            <input type="text" class="form-control" id="inputFirstName" name="inputFirstName" placeholder="First name" value="<%= oldInput.inputFirstName || ''  %>" />
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputFirstName') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputLastName">Last name</label>
+                                            <input type="text" class="form-control" id="inputLastName" name="inputLastName" placeholder="Last name" value="<%= oldInput.inputLastName || ''  %>" />
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputLastName') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputSalary">Salary</label>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">$</span>
+                                                <input type="text" class="form-control" id="inputSalary" name="inputSalary" placeholder="Salary" value="<%= oldInput.inputSalary || ''  %>" aria-label="Amount (to the nearest dollar)" />
+                                                <span class="input-group-text">.00</span>
+                                            </div>
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputSalary') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputType">Type of user</label>
+                                            <select class="form-control mb-3" id="inputType" name="inputType">
+                                                <option selected="">Choose type of user</option>
+                                                <option value="Admin">Admin</option>
+                                                <option value="Salary">Salary</option>
+                                            </select>
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputType') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputState">State</label>
+                                            <select class="form-control mb-3" id="inputState" name="inputState">
+                                                <option selected="">User state</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputState') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputVerified">Verification</label>
+                                            <select class="form-control mb-3" id="inputVerified" name="inputVerified">
+                                                <option selected="">User verification</option>
+                                                <option value="true">Verified</option>
+                                                <option value="false">Unverified</option>
+                                            </select>
+                                            <% for (const error of validationErrors) { %> <% if (error.path === 'inputVerified') { %>
+                                            <p class="text-danger"><%= error.msg %></p>
+                                            <% } %> <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <img id="imageDisplay" alt="Charles Hall" src="/img/avatars/avatar.jpg" class="rounded-circle img-responsive mt-2" width="170" height="170" />
+                                    <input class="form-control my-2" type="file" id="inputImage" name="inputImage" accept="image/jpeg, image/png, image/jpg" />
+                                    <small>
+                                        For best results, use an image <br />
+                                        at least 128px by 128px in .jpg .jpeg .png formats
+                                    </small>
+                                    <% for (const error of validationErrors) { %> <% if (error.path === 'inputImage') { %>
+                                    <p class="text-danger"><%= error.msg %></p>
+                                    <% } %> <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg float-end">Create user</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const inputImage = document.getElementById("inputImage");
+    const imageDisplay = document.getElementById("imageDisplay");
+    inputImage.addEventListener("change", (event) => {
+        if (event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageDisplay.src = e.target.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    });
+</script>
