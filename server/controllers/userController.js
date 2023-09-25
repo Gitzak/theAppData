@@ -6,8 +6,12 @@ const path = require('path');
 const User = require('../models/User');
 
 exports.listOfUsers = (req, res) => {
-    // console.log(typeof req.body.search.value);
+    const authenticatedUserId = req.user._id;
     User.dataTables({
+        find: {
+            _id: { $ne: authenticatedUserId },
+            deletedAt: null
+        },
         limit: req.body.length,
         skip: req.body.start,
         columns: req.body.columns,
@@ -33,7 +37,7 @@ exports.listOfUsers = (req, res) => {
 
 exports.addUser = (req, res) => {
     res.status(200).render('app/users/create', {
-        // userName: req.user.userName,
+        userName: req.user.userName,
         oldInput: []
     })
 }
@@ -44,7 +48,7 @@ exports.storeUser = async (req, res) => {
     if (validationErrors.length > 0) {
         req.flash('validationErrors', validationErrors);
         return res.status(500).render('app/users/create', {
-            // userName: req.user.userName,
+            userName: req.user.userName,
             oldInput: req.body
         })
     }
@@ -90,6 +94,7 @@ exports.editUser = async (req, res) => {
 
         if (user) {
             res.status(200).render("app/users/edit", {
+                userName: req.user.userName,
                 userID: req.params.id,
                 user
             });
@@ -143,6 +148,24 @@ exports.updateUser = async (req, res) => {
         res.redirect("/users/edit/" + req.params.id);
     } catch (error) {
         console.log(error);
+    }
+}
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const updateResult = await User.updateOne(
+            { _id: req.params.id },
+            { $set: { deletedAt: Date.now() } }
+        );
+
+        if (updateResult.modifiedCount === 1) {
+            return res.sendStatus(200)
+        } else {
+            return res.sendStatus(404)
+        }
+    } catch (error) {
+        console.error(error);
+        return res.sendStatus(500)
     }
 }
 

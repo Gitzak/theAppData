@@ -51,8 +51,9 @@
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="http://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script type="text/javascript">
-    $("#table").dataTable({
+    var table = $("#table").DataTable({
         ajax: {
             url: "/users/list_users",
             type: "POST",
@@ -133,10 +134,44 @@
                     return `
                         <button class="btn btn-info btn-show" data-id="${data.id}">Show</button>
                         <a href="/users/edit/${data.id}" class="btn btn-primary btn-edit" data-id="${data.id}">Edit</a>
-                        <button class="btn btn-danger btn-delete" data-id="${data.id}">Delete</button>
+                        <button class="btn btn-danger btn-delete" onclick="confirmDelete('${data.id}')">Delete</button>
                     `;
                 },
             },
         ],
     });
+
+    function confirmDelete(userId) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d41818",
+            cancelButtonColor: "#3a4cf5",
+            confirmButtonText: "Yes, delete it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/users/delete/${userId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    if (response.ok) {
+                        Swal.fire("Deleted!", "The user has been deleted.", "success").then((result) => {
+                            if (result.isConfirmed) {
+                                table.ajax.reload(null, false);
+                            }
+                        });
+                    } else {
+                        Swal.fire("Error", "An error occurred while deleting the user.", "error");
+                    }
+                } catch (error) {
+                    Swal.fire("Error", "An error occurred while deleting the user.", "error");
+                }
+            }
+        });
+    }
 </script>
