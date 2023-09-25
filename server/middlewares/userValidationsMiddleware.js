@@ -12,7 +12,7 @@ exports.validateUserForm = [
     body('inputImage')
         .custom((value, { req }) => {
             if (!req.file) {
-                throw new Error('Image is required');
+                return true;
             }
             const allowedExtensions = ['jpg', 'jpeg', 'png'];
             const fileExtension = req.file.originalname.split('.').pop().toLowerCase();

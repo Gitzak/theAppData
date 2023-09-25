@@ -10,13 +10,17 @@ const userController = require('../controllers/userController')
 const destinationPath = './../../public/img/users';
 const upload = configureStorage(destinationPath);
 
-usersRouters.get('/users', ensureAuthenticated, setCurrentUrl, (req, res) => res.render('app/users/index', {
-    userName: req.user.userName
-}));
+// ensureAuthenticated,
+usersRouters.get('/users', setCurrentUrl, (req, res) => res.render('app/users/index'));
 
-usersRouters.get('/users/add', setCurrentUrl, userController.addUser);
+usersRouters.get('/users/create', setCurrentUrl, userController.addUser);
 
+usersRouters.post('/users/create', setCurrentUrl, upload.single('inputImage'), validateUserForm, handleValidationErrors, userController.storeUser);
 
-usersRouters.post('/users/store', setCurrentUrl, upload.single('inputImage'), validateUserForm, handleValidationErrors, userController.storeUser);
+usersRouters.post('/users/list_users', setCurrentUrl, userController.listOfUsers)
+
+usersRouters.get('/users/edit/:id', setCurrentUrl, userController.editUser)
+
+usersRouters.put('/users/edit/:id', setCurrentUrl, upload.single('inputImage'), validateUserForm, handleValidationErrors, userController.updateUser)
 
 module.exports = usersRouters;

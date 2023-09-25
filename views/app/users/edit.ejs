@@ -1,25 +1,28 @@
 <div class="container-fluid p-0">
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-between">
-            <h1 class="h3"><strong>New User</strong></h1>
+            <h1 class="h3"><strong>Edit User</strong></h1>
             <a href="/users" class="btn btn-primary"><i class="align-middle" data-feather="arrow-left"></i> Back</a>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-12"><%- include('../../partials/messages/message.ejs') %></div>
     </div>
     <div class="row">
         <div class="col-12 d-flex">
             <div class="card flex-fill">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Create new user</h5>
+                    <h5 class="card-title mb-0">Edit user</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/users/create" enctype="multipart/form-data">
+                    <form action="/users/edit/<%= user._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="row">
                                     <div class="col-md-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label" for="inputUsername">Username</label>
-                                            <input type="text" class="form-control" id="inputUsername" name="inputUsername" placeholder="Username" value="<%= oldInput.inputUsername || '' %>" />
+                                            <input type="text" class="form-control" id="inputUsername" name="inputUsername" placeholder="Username" value="<%= user.userName %>" />
                                             <% for (const error of validationErrors) { %> <% if (error.path === 'inputUsername') { %>
                                             <p class="text-danger"><%= error.msg %></p>
                                             <% } %> <% } %>
@@ -28,7 +31,7 @@
                                     <div class="col-md-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label" for="inputEmail">Email</label>
-                                            <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Email" value="<%= oldInput.inputEmail || ''  %>" />
+                                            <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Email" value="<%= user.email %>" />
                                             <% for (const error of validationErrors) { %> <% if (error.path === 'inputEmail') { %>
                                             <p class="text-danger"><%= error.msg %></p>
                                             <% } %> <% } %>
@@ -37,7 +40,7 @@
                                     <div class="col-md-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label" for="inputFirstName">First name</label>
-                                            <input type="text" class="form-control" id="inputFirstName" name="inputFirstName" placeholder="First name" value="<%= oldInput.inputFirstName || ''  %>" />
+                                            <input type="text" class="form-control" id="inputFirstName" name="inputFirstName" placeholder="First name" value="<%= user.firstName %>" />
                                             <% for (const error of validationErrors) { %> <% if (error.path === 'inputFirstName') { %>
                                             <p class="text-danger"><%= error.msg %></p>
                                             <% } %> <% } %>
@@ -46,7 +49,7 @@
                                     <div class="col-md-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label" for="inputLastName">Last name</label>
-                                            <input type="text" class="form-control" id="inputLastName" name="inputLastName" placeholder="Last name" value="<%= oldInput.inputLastName || ''  %>" />
+                                            <input type="text" class="form-control" id="inputLastName" name="inputLastName" placeholder="Last name" value="<%= user.lastName %>" />
                                             <% for (const error of validationErrors) { %> <% if (error.path === 'inputLastName') { %>
                                             <p class="text-danger"><%= error.msg %></p>
                                             <% } %> <% } %>
@@ -57,7 +60,7 @@
                                             <label class="form-label" for="inputSalary">Salary</label>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text">$</span>
-                                                <input type="text" class="form-control" id="inputSalary" name="inputSalary" placeholder="Salary" value="<%= oldInput.inputSalary || ''  %>" aria-label="Amount (to the nearest dollar)" />
+                                                <input type="text" class="form-control" id="inputSalary" name="inputSalary" placeholder="Salary" value="<%= user.salary %>" aria-label="Amount (to the nearest dollar)" />
                                                 <span class="input-group-text">.00</span>
                                             </div>
                                             <% for (const error of validationErrors) { %> <% if (error.path === 'inputSalary') { %>
@@ -108,7 +111,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="text-center">
-                                    <img id="imageDisplay" alt="Charles Hall" src="/img/avatars/avatar.jpg" class="rounded-circle img-responsive mt-2" width="170" height="170" />
+                                    <img id="imageDisplay" alt="Charles Hall" src="/img/users/<%= user.profileImage %>" class="rounded-circle img-responsive mt-2" width="170" height="170" />
                                     <input class="form-control my-2" type="file" id="inputImage" name="inputImage" accept="image/jpeg, image/png, image/jpg" />
                                     <small>
                                         For best results, use an image <br />
@@ -121,7 +124,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg float-end">Create user</button>
+                        <button type="submit" class="btn btn-primary btn-lg float-end">Edit user</button>
                     </form>
                 </div>
             </div>
@@ -140,5 +143,33 @@
             };
             reader.readAsDataURL(event.target.files[0]);
         }
+    });
+
+    // console.log(`<%- JSON.stringify(user) %>`);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const userDataStringify = `<%- JSON.stringify(user) %>`;
+
+        // Function to set the selected option for a <select> element
+        function setSelectedOption(selectElement, value) {
+            for (let i = 0; i < selectElement.options.length; i++) {
+                const option = selectElement.options[i];
+                if (option.value === value) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        }
+
+        const userData = JSON.parse(userDataStringify);
+
+        // Set the selected options for the select elements based on user data
+        const inputTypeSelect = document.getElementById("inputType");
+        const inputStateSelect = document.getElementById("inputState");
+        const inputVerifiedSelect = document.getElementById("inputVerified");
+
+        setSelectedOption(inputTypeSelect, userData.type);
+        setSelectedOption(inputStateSelect, userData.state);
+        setSelectedOption(inputVerifiedSelect, userData.verified == true ? "true" : "false");
     });
 </script>

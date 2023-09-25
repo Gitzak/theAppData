@@ -1,18 +1,142 @@
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" />
 <div class="container-fluid p-0">
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-between">
-            <h1 class="h3"><strong>Dashboard</strong></h1>
-            <a href="/users/add" class="btn btn-primary btn-lg"><i class="align-middle" data-feather="user-plus"></i> Add new user</a>
+            <h1 class="h3"><strong>Users</strong></h1>
+            <a href="/users/create" class="btn btn-primary btn-lg"><i class="align-middle" data-feather="user-plus"></i> Add new user</a>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-md-8 col-12"><%- include('../../partials/messages/message.ejs') %></div>
+    </div>
     <div class="row">
         <div class="col-12 d-flex">
             <div class="card flex-fill">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">List of users</h5>
+                    <h5 class="card-title mb-3">List of users</h5>
+                    <table id="table" class="table table-striped w-100">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>UserName</th>
+                                <th>FullName</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Verified</th>
+                                <th>State</th>
+                                <th>Salary</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>#</th>
+                                <th>UserName</th>
+                                <th>FullName</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Verified</th>
+                                <th>State</th>
+                                <th>Salary</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+    $("#table").dataTable({
+        ajax: {
+            url: "/users/list_users",
+            type: "POST",
+        },
+        initComplete: function () {
+            this.api()
+                .columns()
+                .every(function () {
+                    let column = this;
+                    let title = column.footer().textContent;
+                    if (title == "Salary") {
+                        let input = document.createElement("input");
+                        input.placeholder = title;
+                        input.classList.add("form-control");
+                        column.footer().replaceChildren(input);
+                        input.addEventListener("keyup", () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    }
+                });
+        },
+        serverSide: true,
+        processing: true,
+        search: {
+            regex: true,
+            smart: true,
+        },
+        order: [[8, "desc"]],
+        columns: [
+            {
+                data: "profileImage",
+                render: function (data, type, row) {
+                    return `<img src="/img/users/${data}" class="avatar img-fluid rounded me-1">`;
+                },
+            },
+            { data: "userName" },
+            { data: "fullName" },
+            { data: "email" },
+            { data: "type" },
+            {
+                data: "verified",
+                render: function (data, type, row) {
+                    var badgeClass = data ? "badge bg-success" : "badge bg-danger";
+                    var badgeText = data ? "Verified" : "Not Verified";
+                    return `<span class="${badgeClass}">${badgeText}</span>`;
+                },
+            },
+            {
+                data: "state",
+                render: function (data, type, row) {
+                    var badgeClass = data == "active" ? "badge bg-success" : "badge bg-danger";
+                    var badgeText = data == "active" ? "Active" : "Inactive";
+
+                    return `<span class="${badgeClass}">${badgeText}</span>`;
+                },
+            },
+            // { data: "salary" },
+            {
+                data: "salary",
+                render: function (data, type, row) {
+                    if (type === "display" && data !== null) {
+                        return data.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        });
+                    }
+                    return data;
+                },
+            },
+            { data: "createdAt" },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn btn-info btn-show" data-id="${data.id}">Show</button>
+                        <a href="/users/edit/${data.id}" class="btn btn-primary btn-edit" data-id="${data.id}">Edit</a>
+                        <button class="btn btn-danger btn-delete" data-id="${data.id}">Delete</button>
+                    `;
+                },
+            },
+        ],
+    });
+</script>
