@@ -10,7 +10,6 @@ const userController = require('../controllers/userController')
 const destinationPath = './../../public/img/users';
 const upload = configureStorage(destinationPath);
 
-// ensureAuthenticated,
 usersRouters.get('/users', ensureAuthenticated, setCurrentUrl, (req, res) => res.render('app/users/index', { userName: req.user.userName }));
 
 usersRouters.get('/users/create', ensureAuthenticated, setCurrentUrl, userController.addUser);

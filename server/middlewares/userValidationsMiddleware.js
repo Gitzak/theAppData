@@ -5,7 +5,7 @@ exports.validateUserForm = [
     body('inputEmail', 'Invalid email').isEmail(),
     body('inputLastName', 'Last name is required').notEmpty(),
     body('inputFirstName', 'First name is required').notEmpty(),
-    body('inputSalary').isNumeric().withMessage('Salary must be a number'),
+    body('inputSalary', 'Salary is required').notEmpty().isNumeric().withMessage('Salary must be a number'),
     body('inputType').isIn(['Admin', 'Salary']).withMessage('Invalid user type'),
     body('inputState').isIn(['active', 'inactive']).withMessage('Invalid user state'),
     body('inputVerified').isBoolean().withMessage('Verification must be a boolean'),
@@ -24,6 +24,7 @@ exports.validateUserForm = [
 ];
 
 exports.handleValidationErrors = (req, res, next) => {
+    console.log(req.body);
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {

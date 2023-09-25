@@ -24,6 +24,7 @@
     "express-validator": "^7.0.1",
     "json-server": "^0.17.3",
     "jsonwebtoken": "^9.0.2",
+    "mailtrap": "^3.2.0",
     "method-override": "^3.0.0",
     "moment": "^2.29.4",
     "mongoose": "^7.5.2",

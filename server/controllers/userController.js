@@ -5,7 +5,16 @@ const path = require('path');
 
 const User = require('../models/User');
 
-exports.listOfUsers = (req, res) => {
+const transport = nodemailer.createTransport({
+    host: process.env.NODEMAILER_HOST,
+    port: process.env.NODEMAILER_PORT,
+    auth: {
+        user: process.env.NODEMAILER_USER,
+        pass: process.env.NODEMAILER_PASSWORD
+    }
+});
+
+exports.listOfUsers = async (req, res) => {
     const authenticatedUserId = req.user._id;
     User.dataTables({
         find: {
@@ -44,7 +53,6 @@ exports.addUser = (req, res) => {
 
 exports.storeUser = async (req, res) => {
     const validationErrors = res.locals.validationErrors;
-    console.log(validationErrors);
     if (validationErrors.length > 0) {
         req.flash('validationErrors', validationErrors);
         return res.status(500).render('app/users/create', {
@@ -54,7 +62,6 @@ exports.storeUser = async (req, res) => {
     }
 
     try {
-
         const randomPassword = generateRandomPassword(14);
         const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
@@ -75,6 +82,16 @@ exports.storeUser = async (req, res) => {
 
         await newUser.save();
 
+        const info = await transport.sendMail({
+            from: 'noreply@user-manager.com',
+            to: newUser.email,
+            subject: "Welcome to User Manager",
+            text: `Hello,\n\nWelcome to User Manager! We are thrilled to have you as a member of our platform. Here are your login credentials:\n\nUsername: ${newUser.userName}\nPassword: ${randomPassword}\n\nPlease keep these credentials secure and do not share them with anyone. You can use them to access your account and enjoy our services.\n\nIf you have any questions or need assistance, feel free to contact our support team at support@user-manager.com.\n\nThank you for choosing User Manager!\n\nBest regards,\nThe User Manager Team\n`,
+            html: `<p>Hello,</p><p>Welcome to User Manager! We are thrilled to have you as a member of our platform. Here are your login credentials:</p><ul><li><strong>Username:</strong> ${newUser.userName}</li><li><strong>Password:</strong> ${randomPassword}</li></ul><p>Please keep these credentials secure and do not share them with anyone. You can use them to access your account and enjoy our services.</p><p>If you have any questions or need assistance, feel free to contact our support team at <a href="mailto:support@user-manager.com">support@user-manager.com</a>.</p><p>Thank you for choosing User Manager</p><p>Best regards,<br>The User Manager Team</p>`,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+
         req.flash(
             'success_msg',
             'New user created successfully!'
@@ -83,7 +100,13 @@ exports.storeUser = async (req, res) => {
         return res.redirect('/users');
     } catch (error) {
         console.error(error);
-        return res.status(500).send('An error occurred while saving the user.');
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.email === 1) {
+            req.flash('error_msg', 'Email address is already in use. Please use a different email address.');
+        } else {
+            req.flash('error_msg', 'An error occurred while processing your request.');
+        }
+
+        return res.redirect('/users/create');
     }
 }
 
